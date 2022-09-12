@@ -6,6 +6,15 @@ from sql_queries import *
 
 
 def process_song_file(cur, filepath):
+    """
+    Description: This function use to process song data from raw file in filepath directory then insert into Sparkify Database
+    
+    Arguments:
+        cur: the cursor object
+        filepath: log data or song data file path.
+    
+    return: None
+    """
     # open song file
     df = pd.read_json(filepath, lines=True)
     
@@ -20,11 +29,16 @@ def process_song_file(cur, filepath):
     cur.execute(song_table_insert, song_data)
     
 
-    
-    
-
-
 def process_log_file(cur, filepath):
+    """
+    Description: This function use to process log data from raw in filepath directory then insert into Sparkify Database
+    
+    Arguments:
+        cur: the cursor object
+        filepath: log data or song data file path.
+    
+    Return: None
+    """
     # open log file
     df = pd.read_json(filepath, lines=True)
 
@@ -70,6 +84,20 @@ def process_log_file(cur, filepath):
 
 
 def process_data(cur, conn, filepath, func):
+    """
+    Description: This fucntion will process from listing file in directory,
+    then executing the ingest process each file following to the function that performs the transfromation
+
+    Arguments:
+        cur: the cursor object.
+        conn: connection to the database.
+        filepath: log data or song data file path.
+        func: function that transforms the data and inserts it into the database.
+
+    Returns:
+        None
+    """
+
     # get all files matching extension from directory
     all_files = []
     for root, dirs, files in os.walk(filepath):
@@ -89,6 +117,11 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
+    """
+        Description: main function to process all funtion above 
+        Arguments: None
+        Returns: None
+    """
     conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
     cur = conn.cursor()
 
