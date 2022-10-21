@@ -39,7 +39,7 @@
         
 ## Project Explanation
 
-This project will help Data Analytics team to analys trending video on youtube, based on tag, view, like, dislike, etc... 
+This project will help Data Analytics team to analys trending videos on youtube, based on tag, view, like, dislike, etc... 
 to help content creator startup company will have an closer look in what are trending on youtube.
 Data for project are taken from KAGGLE dataset, store in local at raw format.
 Using Pyspark to process data and write to Parquet format then store in S3 bucket.
@@ -49,9 +49,29 @@ Whenever Copy operation is completed, an quality check function will be execute 
 
 ## Technologies
 
+### Spark Dataframe
+
 In this project I use Spark framework to process data, because it very useful for process bigdata.
 To compare the processing data operation in Spark and Pandas, in which Pandas run operation on simple machine whereas 
 Pyspark run on multiple machines. It's helpful to deal with very large data.
+
+### Star Schema
+
+The schema used in this project is Star Schema, because there will be a lot of data be inserted to fact table, fact table will store 
+measured data and dimention tables will store attribute about data. To be compare with Snowflake Schema our fact table may be have
+some redundant data which that not be accepted in Snowflake Schema, and the critical reason here is our database just have 2 relational.
+
+### Entity connect
+
+Our database have 2 entity are video and category, and we have some attribute is measured, so we create 3 table that named:
+1. Fact table: fact_youtube_trend
+2. Dimension table: dim_video, dim_category
+
+We will connect two ID field in fact table(video_id, category_id) to dimentional tables:
+Connection_1: fact_youtube_trend(video_id) -> dim_video(video_id) relation: 1-N
+Connection_2: fact_youtube_trend(category_id) -> dim_category(category_id) relation: 1-N
+
+The connection will help we can retrieve the detail information about video follow id in query statement
 
 
 ## Data should be updated oftenly
@@ -64,6 +84,20 @@ So it is necessary to update data everyday that help startup content creator com
 
 Because of data will be updated every day, data will become larger everyday and data will be accessed by more than 
 100 people for using these data to analytic varies case.
+
+## Database will increase three scenarios:
+1. The data was increased by 100x.
+2. The pipelines would be run on a daily basis by 7 am every day.
+3. The database needed to be accessed by 100+ people.
+### Answer:
+- The answear for question 1 and 3 is use AWS EMR instead of Redshift cluster because it will take lower cost than increase 
+node on Redshift, and AWS EMR also easy to scale up with Elastic attribute. EMR also easier for increase number of user
+accesse to cluster with Amazon EMR User Role Mapper, help admin to manage the accessible for specific user more effectively
+- We will use Apache Airflow in the future to run the pipeline daily basis by 7 am everyday, with Airflow you can define your pipeline step very easy to understand with DAG.
+
+
+
+
 
 ## Schema
 ### Category
@@ -93,44 +127,37 @@ Because of data will be updated every day, data will become larger everyday and 
 ## Data Dictionary
 ### Dim_category table
 
-+-----------+---------------------------+
-|Column     |Description                |
-+-----------+---------------------------+
-|category_id|ID of category, Primary key|
-|title      |Name of category           |
-+-----------+---------------------------+
+| Column      | Description                 |
+|-------------|-----------------------------|
+| category_id | ID of category, Primary key |
+| title       | Name of category            |
 
 ### Dim_video table
 
-+----------------------+-------------------------------------------------+
-|Column                |Description                                      |
-+----------------------+-------------------------------------------------+
-|video_id              |ID of video on youtube                           |
-|title                 |Title of video                                   |
-|channel_title         |Title of channel which post this video allow null|
-|tags                  |Tag of video                                     |
-|comments_disabled     |This video can comment (Yes/No)                  |
-|ratings_disabled      |This video can rating (Yes/No)                   |
-|video_error_or_removed|This video removed (Yes/No)                      |
-+----------------------+-------------------------------------------------+
+| Column                 | Description                                       |
+|------------------------|---------------------------------------------------|
+| video_id               | ID of video on youtube                            |
+| title                  | Title of video                                    |
+| channel_title          | Title of channel which post this video allow null |
+| tags                   | Tag of video                                      |
+| comments_disabled      | This video can comment (Yes/No)                   |
+| ratings_disabled       | This video can rating (Yes/No)                    |
+| video_error_or_removed | This video removed (Yes/No)                       |
 
 ### Fact_youtube_trend table
 
-+-------------+---------------------------------------------------------------------------------+
-|Column       |Description                                                                      |
-+-------------+---------------------------------------------------------------------------------+
-|id           |ID for fact table, this is increment field and is primary key                    |
-|video_id     |ID of video on youtube, this field reference to field video_id on dim_video table|
-|trending_date|The date that video on top trending                                              |
-|category_id  |ID of category, this field reference to field category_id on dim_category table  |
-|publish_time |The time that video being published                                              |
-|views        |Total views of video                                                             |
-|likes        |Total likes of video                                                             |
-|dislikes     |Total dislikes of video                                                          |
-|comment_count|Total comment of video                                                           |
-+-------------+---------------------------------------------------------------------------------+
+| Column        | Description                                                                       | Foreign key               |
+|---------------|-----------------------------------------------------------------------------------|---------------------------|
+| id            | ID for fact table, this is increment field and is primary key                     |                           |
+| video_id      | ID of video on youtube, this field reference to field video_id on dim_video table | dim_video(video_id)       |
+| trending_date | The date that video on top trending                                               |                           |
+| category_id   | ID of category, this field reference to field category_id on dim_category table   | dim_category(category_id) |
+| publish_time  | The time that video being published                                               |                           |
+| views         | Total views of video                                                              |                           |
+| likes         | Total likes of video                                                              |                           |
+| dislikes      | Total dislikes of video                                                           |                           |
+| comment_count | Total comment of video                                                            |                           |
 
-   
 ## Build ETL Pipeline
 
 1. Run *Cluster_implement.ipynb* to create Redshift cluster, S3 bucket, and IAM role for access to S3
