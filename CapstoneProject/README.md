@@ -47,11 +47,28 @@ After store in S3 bucket, data will be copy to Youtube Trend database hosted by 
 Whenever Copy operation is completed, an quality check function will be execute and check whether any data inserted to database.
 
 
+## Technologies
+
+In this project I use Spark framework to process data, because it very useful for process bigdata.
+To compare the processing data operation in Spark and Pandas, in which Pandas run operation on simple machine whereas 
+Pyspark run on multiple machines. It's helpful to deal with very large data.
+
+
+## Data should be updated oftenly
+
+Because this is an trending database for youtube, and trend is updated everyday and every hour.
+So it is necessary to update data everyday that help startup content creator company to be update what is trending.
+
+
+## Data Scalable
+
+Because of data will be updated every day, data will become larger everyday and data will be accessed by more than 
+100 people for using these data to analytic varies case.
+
 ## Schema
 ### Category
    category_id int
    title varchar
- 
  
 ### Video
    video_id varchar primary key,
@@ -62,7 +79,6 @@ Whenever Copy operation is completed, an quality check function will be execute 
    ratings_disabled boolean,
    video_error_or_removed boolean
    
-
 ### Youtube Trending
    id int identity(0,1) primary key,
    video_id varchar,
@@ -73,9 +89,42 @@ Whenever Copy operation is completed, an quality check function will be execute 
    likes int,
    dislikes int,
    comment_count int
-   
+
+## Data Dictionary
+### Dim_category table
+
+Column	Description
+category_id	ID of category, Primary key
+title	Name of category
+
+### Dim_video table
+
+Column	Description
+video_id	ID of video on youtube
+title	Title of video
+channel_title	Title of channel which post this video allow null
+tags	Tag of video
+comments_disabled	This video can comment (Yes/No)
+ratings_disabled	This video can rating (Yes/No)
+video_error_or_removed	This video removed (Yes/No)
+
+### Fact_youtube_trend table
+
+Column	Description
+id	ID for fact table, this is increment field and is primary key
+video_id	ID of video on youtube, this field reference to field video_id on dim_video table
+trending_date	The date that video on top trending
+category_id	ID of category, this field reference to field category_id on dim_category table
+publish_time	The time that video being published
+views	Total views of video
+likes	Total likes of video
+dislikes	Total dislikes of video
+comment_count	Total comment of video
+
+
    
 ## Build ETL Pipeline
+
 1. Run *Cluster_implement.ipynb* to create Redshift cluster, S3 bucket, and IAM role for access to S3
 2. Run *create_table.py* to create table on Redshift cluster
 3. Run *etl.py* to execute ETL process
