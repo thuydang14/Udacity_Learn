@@ -93,34 +93,42 @@ Because of data will be updated every day, data will become larger everyday and 
 ## Data Dictionary
 ### Dim_category table
 
-Column	Description
-category_id	ID of category, Primary key
-title	Name of category
++-----------+---------------------------+
+|Column     |Description                |
++-----------+---------------------------+
+|category_id|ID of category, Primary key|
+|title      |Name of category           |
++-----------+---------------------------+
 
 ### Dim_video table
 
-Column	Description
-video_id	ID of video on youtube
-title	Title of video
-channel_title	Title of channel which post this video allow null
-tags	Tag of video
-comments_disabled	This video can comment (Yes/No)
-ratings_disabled	This video can rating (Yes/No)
-video_error_or_removed	This video removed (Yes/No)
++----------------------+-------------------------------------------------+
+|Column                |Description                                      |
++----------------------+-------------------------------------------------+
+|video_id              |ID of video on youtube                           |
+|title                 |Title of video                                   |
+|channel_title         |Title of channel which post this video allow null|
+|tags                  |Tag of video                                     |
+|comments_disabled     |This video can comment (Yes/No)                  |
+|ratings_disabled      |This video can rating (Yes/No)                   |
+|video_error_or_removed|This video removed (Yes/No)                      |
++----------------------+-------------------------------------------------+
 
 ### Fact_youtube_trend table
 
-Column	Description
-id	ID for fact table, this is increment field and is primary key
-video_id	ID of video on youtube, this field reference to field video_id on dim_video table
-trending_date	The date that video on top trending
-category_id	ID of category, this field reference to field category_id on dim_category table
-publish_time	The time that video being published
-views	Total views of video
-likes	Total likes of video
-dislikes	Total dislikes of video
-comment_count	Total comment of video
-
++-------------+---------------------------------------------------------------------------------+
+|Column       |Description                                                                      |
++-------------+---------------------------------------------------------------------------------+
+|id           |ID for fact table, this is increment field and is primary key                    |
+|video_id     |ID of video on youtube, this field reference to field video_id on dim_video table|
+|trending_date|The date that video on top trending                                              |
+|category_id  |ID of category, this field reference to field category_id on dim_category table  |
+|publish_time |The time that video being published                                              |
+|views        |Total views of video                                                             |
+|likes        |Total likes of video                                                             |
+|dislikes     |Total dislikes of video                                                          |
+|comment_count|Total comment of video                                                           |
++-------------+---------------------------------------------------------------------------------+
 
    
 ## Build ETL Pipeline
