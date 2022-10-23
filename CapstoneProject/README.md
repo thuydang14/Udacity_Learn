@@ -179,7 +179,6 @@ limit 10;
 
 - Result
 
-
 | video\_id   | title                                                           | title            | likes   |
 | ----------- | --------------------------------------------------------------- | ---------------- | ------- |
 | WtE011iVx1Q | SebastiÃ¡n Yatra - Por Perro ft. Luis Figueroa, Lary Over       | Music            | 396337  |
@@ -198,6 +197,7 @@ limit 10;
 ### Top 10 the 10 most trending categories.
 
 - Code
+
 select c.category_id, c.title, sum(f.views) as total_views
 from fact_youtube_trend f join dim_category c on f.category_id = c.category_id
 group by c.category_id, c.title
@@ -205,6 +205,7 @@ order by sum(f.views) desc
 limit 10;
 
 - Result
+
 | category\_id | title                | total\_views |
 | ------------ | -------------------- | ------------ |
 | 24           | Entertainment        | 1.08E+10     |
