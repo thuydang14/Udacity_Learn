@@ -170,6 +170,7 @@ accesse to cluster with Amazon EMR User Role Mapper, help admin to manage the ac
 ### Top 10 trending video.
 
 - Code
+
 select distinct(f.video_id), v.title, c.title, f.likes
 from fact_youtube_trend f join dim_video v on f.video_id = v.video_id
 join dim_category c on f.category_id = c.category_id
@@ -177,6 +178,8 @@ order by views desc
 limit 10;
 
 - Result
+
+
 | video\_id   | title                                                           | title            | likes   |
 | ----------- | --------------------------------------------------------------- | ---------------- | ------- |
 | WtE011iVx1Q | SebastiÃ¡n Yatra - Por Perro ft. Luis Figueroa, Lary Over       | Music            | 396337  |
