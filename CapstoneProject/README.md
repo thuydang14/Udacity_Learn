@@ -163,3 +163,54 @@ accesse to cluster with Amazon EMR User Role Mapper, help admin to manage the ac
 1. Run *Cluster_implement.ipynb* to create Redshift cluster, S3 bucket, and IAM role for access to S3
 2. Run *create_table.py* to create table on Redshift cluster
 3. Run *etl.py* to execute ETL process
+
+
+## Result
+
+### Top 10 trending video.
+
+- Code
+select distinct(f.video_id), v.title, c.title, f.likes
+from fact_youtube_trend f join dim_video v on f.video_id = v.video_id
+join dim_category c on f.category_id = c.category_id
+order by views desc
+limit 10;
+
+- Result
+| video\_id   | title                                                           | title            | likes   |
+| ----------- | --------------------------------------------------------------- | ---------------- | ------- |
+| WtE011iVx1Q | SebastiÃ¡n Yatra - Por Perro ft. Luis Figueroa, Lary Over       | Music            | 396337  |
+| 7C2z4GqqS5E | BTS (ë°©íƒ„ì†Œë…„ë‹¨) 'FAKE LOVE' Official MV                   | Music            | 3880074 |
+| VTzD0jNdrmo | Rkm & Ken-Y âŒ Natti Natasha - Tonta \[Official Video\]        | Music            | 383030  |
+| i0p1bmr0EmE | TWICE What is Love? M/V                                         | Music            | 1111592 |
+| 6ZfuNTqbHE8 | Marvel Studios' Avengers: Infinity War Official Trailer         | Entertainment    | 1735931 |
+| wfWkmURBNv8 | Ozuna x Romeo Santos - El Farsante Remix                        | Music            | 769384  |
+| ePO5M5DE01I | Tiger Zinda Hai | Official Trailer | Salman Khan | Katrina Kaif | Film & Animation | 829362  |
+| 2Vv-BfVoq4g | Ed Sheeran - Perfect (Official Music Video)                     | Music            | 1634130 |
+| AhQcNVyndSM | Brytiago X Darell - Asesina ðŸ—¡                                | Music            | 299378  |
+| 0XElmYomloA | Zion & Lennox - La Player (Bandolera) I Video Oficial           | Music            | 104931  |
+
+
+
+### Top 10 the 10 most trending categories.
+
+- Code
+select c.category_id, c.title, sum(f.views) as total_views
+from fact_youtube_trend f join dim_category c on f.category_id = c.category_id
+group by c.category_id, c.title
+order by sum(f.views) desc
+limit 10;
+
+- Result
+| category\_id | title                | total\_views |
+| ------------ | -------------------- | ------------ |
+| 24           | Entertainment        | 1.08E+10     |
+| 10           | Music                | 4.72E+09     |
+| 22           | People & Blogs       | 3.74E+09     |
+| 17           | Sports               | 2.94E+09     |
+| 23           | Comedy               | 2.81E+09     |
+| 25           | News & Politics      | 2.45E+09     |
+| 1            | Film & Animation     | 1.69E+09     |
+| 26           | Howto & Style        | 1.49E+09     |
+| 20           | Gaming               | 1.01E+09     |
+| 28           | Science & Technology | 7.92E+08     |
